@@ -11,28 +11,146 @@
 export const cohorte = {
   label: 'Cohorte 2026 / 2027',
   annees: '2026-2027',
-  // Fenêtre de la promotion en lives. Sert au schema.org Course.
-  debut: '2026-09-29',
-  fin: '2027-03-02',
+  // Saison décalée en octobre : la rentrée de septembre est le pire moment
+  // pour demander à un indépendant de dégager 1h30 par semaine.
+  debut: '2026-10-06',
+  fin: '2027-04-06',
+  saison: "d'octobre 2026 à avril 2027",
 };
 
 export const offre = {
-  // À CONFIRMER : tarif repris de la cohorte 2025-2026.
-  prixComptant: 1800,
   prixDevise: 'EUR',
-  prixMensuel: 180,
-  nbMensualites: 10,
   // Les montants affichés sont toutes taxes comprises. La mention doit
   // apparaître partout où un prix est écrit (obligation d'information du
   // consommateur, art. L112-1 du code de la consommation).
   mentionTva: 'TTC',
-  // À CONFIRMER : Podia — récupérer l'offer_id de la nouvelle offre 2026-2027
-  // (celui de 2025-2026 était 2963419).
-  checkoutUrl:
-    'https://www.decoincesducrayon.com/academie-des-decoinces-du-crayon-2026-2027/buy',
-  // Lien secondaire pour les demandes de devis employeur / OPCO.
   emailDevis: 'nicolas.verdot@gmail.com',
 };
+
+/* --- Early bird en deux paliers -------------------------------------------
+   ⚠️ Une réduction annoncée engage : le prix de référence barré doit avoir été
+   réellement pratiqué, et l'échéance doit être vraie. Les paliers ci-dessous
+   décroissent à mesure que la saison approche, et la page repasse d'elle-même
+   au prix plein après le dernier.
+
+   ⚠️ Le site étant statique, le palier est figé au moment du build. Le
+   workflow GitHub reconstruit le site chaque nuit pour que le passage d'un
+   palier à l'autre se fasse tout seul — ne pas retirer ce `schedule`.
+--------------------------------------------------------------------------- */
+export const paliers = [
+  {
+    pourcentage: 30,
+    // À CONFIRMER : code repris de la cohorte 2025-2026. Vérifier qu'il existe
+    // bien sur les nouvelles offres Podia.
+    code: 'ACA30',
+    jusquAu: '2026-09-15',
+    jusquAuLisible: '15 septembre 2026',
+    libelle: 'Tarif early bird',
+  },
+  {
+    pourcentage: 20,
+    // À CONFIRMER : coupon à créer côté Podia.
+    code: 'ACA20',
+    jusquAu: '2026-10-05',
+    jusquAuLisible: '5 octobre 2026',
+    libelle: 'Dernière ligne droite',
+  },
+];
+
+/** Palier en cours à la date du build, ou null si la saison a démarré. */
+function palierCourant() {
+  const aujourdhui = new Date().toISOString().slice(0, 10);
+  return paliers.find((p) => aujourdhui <= p.jusquAu) ?? null;
+}
+
+export const promo = palierCourant();
+
+/** Le palier suivant, pour annoncer honnêtement ce qui se passe après. */
+export const promoSuivante = promo
+  ? (paliers[paliers.indexOf(promo) + 1] ?? null)
+  : null;
+
+/* --- Formules ------------------------------------------------------------
+   ⚠️ À CONFIRMER avant mise en ligne : les deux `offerId` Podia (celui de la
+   cohorte 2025-2026 était 2963419), le prix de la formule Mentorat et le
+   nombre de places qu'elle ouvre.
+------------------------------------------------------------------------- */
+export const formules = [
+  {
+    id: 'academie',
+    nom: 'Académie',
+    resume: "Le parcours complet, en groupe.",
+    prixComptant: 1800,
+    prixMensuel: 180,
+    nbMensualites: 10,
+    offerId: '',
+    slugPodia: 'academie-des-decoinces-du-crayon-2026-2027',
+    miseEnAvant: false,
+    places: null,
+    inclus: [
+      '11 modules de formation, disponibles immédiatement',
+      '9 laboratoires avancés et les cahiers d’exercices',
+      '7 lives avec Nicolas, d’octobre 2026 à avril 2027',
+      'Les replays et toutes les mises à jour futures, à vie',
+      'Le groupe privé et l’accès aux lives des cohortes suivantes',
+    ],
+    enPlus: [],
+  },
+  {
+    id: 'mentorat',
+    nom: 'Académie + Mentorat',
+    resume: "Le parcours complet, plus deux heures en tête à tête.",
+    // À CONFIRMER : 600 € d'écart pour 2 h de mentorat individuel avec un
+    // coach certifié. À ajuster selon ton tarif horaire d'accompagnement.
+    prixComptant: 2400,
+    prixMensuel: 240,
+    nbMensualites: 10,
+    offerId: '',
+    slugPodia: 'academie-des-decoinces-du-crayon-2026-2027-mentorat',
+    miseEnAvant: true,
+    // À CONFIRMER : le nombre de places que ton agenda peut absorber.
+    places: 8,
+    inclus: ['Tout ce que contient la formule Académie'],
+    enPlus: [
+      {
+        titre: 'Séance 1 — Cadrer ta pratique',
+        texte:
+          "En début de parcours : où tu veux emmener ton activité, quelle place la facilitation doit y prendre, et sur quels modules concentrer ton énergie.",
+      },
+      {
+        titre: 'Séance 2 — Relire une mission réelle',
+        texte:
+          "En cours de saison : tu apportes un cadrage, un design de session ou une animation qui s'est mal passée, et on la retravaille ensemble.",
+      },
+    ],
+  },
+];
+
+// La formule affichée dans le hero et la barre collante.
+export const formulePrincipale = formules[0];
+
+export type Formule = (typeof formules)[number];
+
+const BOUTIQUE = 'https://www.decoincesducrayon.com';
+
+/** Prix effectivement payé, remise appliquée si l'early bird court encore. */
+export function prixRemise(montant: number): number {
+  return promo ? Math.round(montant * (1 - promo.pourcentage / 100)) : montant;
+}
+
+/**
+ * Lien de paiement Podia. Le coupon est passé en paramètre d'URL : c'est le
+ * mécanisme utilisé sur la page 2025-2026, la remise s'applique alors sans que
+ * l'acheteur ait à saisir le code.
+ */
+export function lienAchat(formule: Formule): string {
+  const base = `${BOUTIQUE}/${formule.slugPodia}/buy`;
+  const params = new URLSearchParams();
+  if (formule.offerId) params.set('offer_id', formule.offerId);
+  if (promo) params.set('coupon', promo.code);
+  const q = params.toString();
+  return q ? `${base}?${q}` : base;
+}
 
 export const chiffres = [
   { valeur: '1', label: "module d'embarquement" },
@@ -81,31 +199,37 @@ export const frictions = [
 
 export const competences = [
   {
+    doodle: 'cadrer',
     titre: 'Cadrer une demande',
     texte:
       "Mener l'entretien de commande, reformuler visuellement le besoin devant le client, identifier les grandes étapes de l'agenda et chiffrer sans oublier ce qui coûte vraiment.",
   },
   {
+    doodle: 'concevoir',
     titre: 'Concevoir la session',
     texte:
       "Construire un déroulé qui tient debout : rythme, alternance des formats, place laissée au groupe, et assez de souplesse pour absorber l'imprévu du jour J.",
   },
   {
+    doodle: 'preparer',
     titre: 'Préparer et ouvrir',
     texte:
       "Choisir l'agencement de la salle et le matériel, préparer le commanditaire à ouvrir la séance, poser un cadre qui donne au groupe l'autorisation de se lancer.",
   },
   {
+    doodle: 'tenir',
     titre: 'Tenir le groupe',
     texte:
       'Faire parler sans laisser un seul profil occuper tout l\'espace, mener la divergence puis la convergence, et savoir quoi faire quand la discussion tourne en rond.',
   },
   {
+    doodle: 'atterrir',
     titre: 'Faire atterrir',
     texte:
       "Transformer un mur d'idées en plan d'action que le collectif s'approprie, puis clôturer en ancrant ce qui a été appris plutôt qu'en distribuant des tâches.",
   },
   {
+    doodle: 'solide',
     titre: 'Rester solide',
     texte:
       "Repérer tes propres moments de bascule — ceux où tu perds tes moyens face au groupe — et retrouver un état de sécurité en pleine séance, grâce aux apports de la théorie polyvagale.",
@@ -125,7 +249,7 @@ export const pourQui = {
   non: [
     "Tu cherches uniquement un cours de dessin. Les laboratoires t'y aideront, mais le cœur de l'Académie c'est la facilitation.",
     "Tu attends une certification finançable par le CPF ou un OPCO : l'Académie n'est pas encore éligible (le financement direct par l'employeur, lui, est possible).",
-    "Tu ne peux pas dégager environ 1h30 par semaine pendant la saison des lives.",
+    "Tu ne peux pas dégager environ 1h30 par semaine pendant la saison des lives, d'octobre à avril.",
   ],
 };
 
@@ -275,16 +399,17 @@ export const laboratoires = [
   { titre: 'Décoince ton iPad', texte: 'Passer au numérique sans perdre ce qui fait la force du papier.' },
 ];
 
-// À CONFIRMER : dates calées sur des mardis, sur le même schéma que la
-// cohorte 2025-2026 (1 live par mois, de septembre à mars, 18h30 heure de Paris).
+// Le premier mardi de chaque mois, 18h30 heure de Paris, d'octobre à avril.
+// Rythme régulier et énonçable en une phrase — plus facile à retenir et à
+// caser dans un agenda que sept dates sans logique apparente.
 export const lives = [
-  { date: '2026-09-29', libelle: 'Mardi 29 septembre 2026', note: 'Live de lancement' },
-  { date: '2026-10-13', libelle: 'Mardi 13 octobre 2026', note: '' },
+  { date: '2026-10-06', libelle: 'Mardi 6 octobre 2026', note: 'Live de lancement' },
   { date: '2026-11-03', libelle: 'Mardi 3 novembre 2026', note: '' },
-  { date: '2026-12-08', libelle: 'Mardi 8 décembre 2026', note: '' },
+  { date: '2026-12-01', libelle: 'Mardi 1er décembre 2026', note: '' },
   { date: '2027-01-05', libelle: 'Mardi 5 janvier 2027', note: '' },
   { date: '2027-02-02', libelle: 'Mardi 2 février 2027', note: '' },
-  { date: '2027-03-02', libelle: 'Mardi 2 mars 2027', note: 'Dernier live de la saison' },
+  { date: '2027-03-02', libelle: 'Mardi 2 mars 2027', note: '' },
+  { date: '2027-04-06', libelle: 'Mardi 6 avril 2027', note: 'Dernier live de la saison' },
 ];
 
 /* --- Preuve -------------------------------------------------------------- */
@@ -345,7 +470,7 @@ export const faq = [
   {
     question: 'Comment se passent les lives ?',
     reponse:
-      "Les lives ont lieu le mardi à partir de 18h30 (heure de Paris), sur Zoom, à raison d'un par mois entre septembre et mars. Ce sont des moments de questions ouvertes, pas des cours magistraux. Tout est enregistré et déposé sur ton espace de formation. Ils sont ouverts aux anciennes cohortes comme aux nouvelles, quel que soit ton avancement.",
+      "Les lives ont lieu le mardi à partir de 18h30 (heure de Paris), sur Zoom, le premier mardi de chaque mois, d'octobre 2026 à avril 2027. Ce sont des moments de questions ouvertes, pas des cours magistraux. Tout est enregistré et déposé sur ton espace de formation. Ils sont ouverts aux anciennes cohortes comme aux nouvelles, quel que soit ton avancement.",
   },
   {
     question: "Et si j'ai des questions entre deux lives ?",

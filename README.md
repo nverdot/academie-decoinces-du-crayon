@@ -23,11 +23,29 @@ modifier ce fichier.
 
 | Quoi | Où | Statut |
 |---|---|---|
-| Tarif (1 800 € / 10 × 180 €) | `src/data/academie.ts` → `offre` | repris de 2025-2026, **à confirmer** |
-| Lien de checkout Podia | `src/data/academie.ts` → `offre.checkoutUrl` | l'`offer_id` de 2025-2026 était `2963419`, **il faut celui de la nouvelle offre** |
-| Dates des 7 lives | `src/data/academie.ts` → `lives` | mardis calés sur le rythme 2025-2026, **à confirmer** |
-| Nombre de laboratoires | `src/data/academie.ts` → `chiffres` / `laboratoires` | la page 2025-2026 annonçait « 10 laboratoires » mais n'en listait que 9 ; ici on annonce 9. À trancher. |
-| Codes promo | — | la page 2025-2026 avait un lien « remise de 30 % » (`?coupon=ACA30`). Non repris ici. |
+| Prix « Académie » (1 800 € TTC) | `formules[0]` | repris de 2025-2026, **à confirmer** |
+| Prix « Académie + Mentorat » (2 400 € TTC) | `formules[1]` | **proposition** : +600 € pour 2 h de mentorat individuel, à caler sur ton tarif horaire |
+| Nombre de places en Mentorat (8) | `formules[1].places` | **à confirmer** selon ce que ton agenda absorbe |
+| `offerId` Podia des deux formules | `formules[].offerId` | **vides** — sans eux, aucun paiement possible. L'offre 2025-2026 portait l'id `2963419` |
+| Coupons `ACA30` et `ACA20` | `paliers[].code` | `ACA30` existait en 2025-2026 ; **`ACA20` est à créer côté Podia** |
+| Dates des 7 lives | `lives` | premier mardi du mois, octobre 2026 → avril 2027, **à confirmer** |
+| Nombre de laboratoires | `chiffres` / `laboratoires` | la page 2025-2026 annonçait 10 mais en listait 9 ; ici on annonce 9 |
+
+## Early bird : deux paliers
+
+`paliers` définit −30 % jusqu'au 15 septembre 2026, puis −20 % jusqu'au
+5 octobre 2026, veille du live de lancement. Passé le dernier palier, `promo`
+vaut `null` et la page repasse **toute seule** au prix plein : plus de bandeau,
+plus de prix barré, plus de coupon dans les liens Podia.
+
+⚠️ Le site est statique : le palier est figé au moment du build. Le workflow
+contient donc un `schedule` quotidien (4h17 UTC) qui reconstruit et redéploie.
+**Ne pas le retirer**, sinon la page continuerait d'afficher −30 % après
+l'échéance — ce qui, en plus d'être faux, est une pratique commerciale
+trompeuse au sens du code de la consommation.
+
+Même logique pour le prix barré : le montant de référence doit avoir été
+réellement pratiqué.
 
 ## Ressources visuelles
 

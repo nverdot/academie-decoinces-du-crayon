@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import Doodle from '../components/Doodle.astro';
 import portrait from '../assets/nicolas-portrait.png';
 import {
   chiffres,
@@ -10,13 +11,19 @@ import {
   credentials,
   faq,
   formateur,
+  formulePrincipale,
+  formules,
   frictions,
   laboratoires,
   liens,
+  lienAchat,
   lives,
   modules,
   offre,
   pourQui,
+  prixRemise,
+  promo,
+  promoSuivante,
   temoignages,
 } from '../data/academie';
 
@@ -25,11 +32,19 @@ const title =
 const description =
   "Formation en ligne à la facilitation et à la facilitation graphique pour consultants, formateurs et coachs. 11 modules, 9 laboratoires, 7 lives avec Nicolas Verdot. Accès à vie. Cohorte 2026-2027.";
 
-const prixFmt = new Intl.NumberFormat('fr-FR').format(offre.prixComptant);
-// « Sans frais » n'est affiché que si l'échelonnement ne coûte réellement rien
+const eur = new Intl.NumberFormat('fr-FR');
+const fmt = (n: number) => eur.format(n);
+
+// Formule mise en avant dans le hero, la barre collante et le CTA final.
+const principale = formulePrincipale;
+const lienPrincipal = lienAchat(principale);
+const prixPrincipal = prixRemise(principale.prixComptant);
+const mensuelPrincipal = prixRemise(principale.prixMensuel);
+
+// « Sans frais » ne s'affiche que si l'échelonnement ne coûte réellement rien
 // de plus — la mention se met à jour toute seule si un tarif change.
-const echelonnementSansFrais =
-  offre.prixMensuel * offre.nbMensualites === offre.prixComptant;
+const sansFrais = (f: typeof principale) =>
+  prixRemise(f.prixMensuel) * f.nbMensualites === prixRemise(f.prixComptant);
 
 const jsonLd = [
   {
@@ -45,20 +60,22 @@ const jsonLd = [
       name: 'Décoincés du Crayon',
       url: 'https://www.decoincesducrayon.com',
     },
-    offers: {
+    offers: formules.map((f) => ({
       '@type': 'Offer',
-      price: offre.prixComptant,
+      name: f.nom,
+      price: prixRemise(f.prixComptant),
       priceCurrency: offre.prixDevise,
       category: 'Paid',
-      url: offre.checkoutUrl,
+      url: lienAchat(f),
       availability: 'https://schema.org/InStock',
+      ...(promo.actif ? { priceValidUntil: promo.dateFin } : {}),
       priceSpecification: {
         '@type': 'PriceSpecification',
-        price: offre.prixComptant,
+        price: prixRemise(f.prixComptant),
         priceCurrency: offre.prixDevise,
         valueAddedTaxIncluded: true,
       },
-    },
+    })),
     hasCourseInstance: {
       '@type': 'CourseInstance',
       courseMode: 'online',
@@ -85,6 +102,25 @@ const jsonLd = [
 ---
 
 <Layout title={title} description={description} jsonLd={jsonLd}>
+  {
+    promo && (
+      <aside class="promo-bar">
+        <div class="container promo-inner">
+          <p>
+            <strong>
+              {promo.libelle} : −{promo.pourcentage}% jusqu'au{' '}
+              {promo.jusquAuLisible}</strong>{promoSuivante
+              ? `, puis −${promoSuivante.pourcentage}% jusqu'au ${promoSuivante.jusquAuLisible}.`
+              : ', dernier palier avant le tarif plein.'}
+            <span class="promo-aside">
+              {' '}La remise s'applique automatiquement au paiement.
+            </span>
+          </p>
+        </div>
+      </aside>
+    )
+  }
+
   <header class="masthead">
     <div class="container masthead-inner">
       <a href="/" class="brand" aria-label="Académie des Décoincés du Crayon, accueil">
@@ -103,7 +139,7 @@ const jsonLd = [
         </picture>
         <span class="brand-sub">Académie</span>
       </a>
-      <a class="masthead-cta" href={offre.checkoutUrl}>S'inscrire</a>
+      <a class="masthead-cta" href={lienPrincipal}>S'inscrire</a>
     </div>
   </header>
 
@@ -125,12 +161,15 @@ const jsonLd = [
         </p>
 
         <div class="hero-cta">
-          <a class="btn btn--primary" href={offre.checkoutUrl}>
+          <a class="btn btn--primary" href={lienPrincipal}>
             Rejoindre la cohorte {cohorte.annees}
           </a>
           <p class="hero-price">
-            <strong>{prixFmt} € {offre.mentionTva}</strong> ou
-            {offre.nbMensualites} paiements mensuels de {offre.prixMensuel} €
+            {promo && (
+              <s class="hero-price-was">{fmt(principale.prixComptant)} €</s>
+            )}
+            <strong>{fmt(prixPrincipal)} € {offre.mentionTva}</strong> ou
+            {principale.nbMensualites} × {fmt(mensuelPrincipal)} €
             {offre.mentionTva}
           </p>
         </div>
@@ -140,6 +179,10 @@ const jsonLd = [
           <li>7 lives en direct avec Nicolas</li>
           <li>Une communauté qui accumule les promotions</li>
         </ul>
+
+        <div class="hero-scene">
+          <Doodle name="scene" />
+        </div>
 
         <p class="hero-authority">
           Animée par <strong>Nicolas Verdot</strong>, fondateur du Sommet des
@@ -200,6 +243,9 @@ const jsonLd = [
           {
             competences.map((c, i) => (
               <article class="skill-card">
+                <div class="skill-doodle">
+                  <Doodle name={c.doodle} />
+                </div>
                 <span class="skill-num">{String(i + 1).padStart(2, '0')}</span>
                 <h3>{c.titre}</h3>
                 <p>{c.texte}</p>
@@ -415,38 +461,85 @@ const jsonLd = [
     <!-- ================= TARIF ================= -->
     <section class="section section--dark" id="tarif">
       <div class="container">
-        <div class="pricing">
+        <div class="pricing-head">
           <p class="eyebrow">Rejoindre la {cohorte.label.toLowerCase()}</p>
-          <h2>Une inscription, un accès à vie</h2>
-          <p class="pricing-amount">
-            <strong>{prixFmt} € <em>{offre.mentionTva}</em></strong>
-            <span>
-              ou {offre.nbMensualites} × {offre.prixMensuel} €
-              {offre.mentionTva}{echelonnementSansFrais ? ', sans frais' : ''}
-            </span>
-          </p>
-          <ul class="pricing-list">
-            <li>11 modules de formation, disponibles immédiatement</li>
-            <li>9 laboratoires avancés et les cahiers d'exercices</li>
-            <li>7 lives avec Nicolas entre septembre 2026 et mars 2027</li>
-            <li>Les replays et toutes les mises à jour futures, à vie</li>
-            <li>Le groupe privé et l'accès aux lives des cohortes suivantes</li>
-          </ul>
-          <div class="pricing-cta">
-            <a class="btn btn--primary" href={offre.checkoutUrl}>
-              Je m'inscris à l'Académie
-            </a>
-            <a class="btn btn--ghost" href={`mailto:${offre.emailDevis}?subject=Devis%20Acad%C3%A9mie%20des%20D%C3%A9coinc%C3%A9s%20du%20Crayon%20${cohorte.annees}`}>
-              Demander un devis employeur
-            </a>
-          </div>
-          <p class="pricing-note">
-            Tous les prix sont indiqués {offre.mentionTva}. Paiement sécurisé
-            par Stripe via Podia. Ton entreprise peut prendre l'Académie en
-            charge : demande un devis et fais-le valider en interne.
-            L'Académie n'est en revanche pas éligible au CPF.
+          <h2>Deux façons de suivre l'Académie</h2>
+          <p class="lead">
+            Le contenu est le même dans les deux cas. Ce qui change, c'est le
+            temps que je passe avec toi en tête à tête.
           </p>
         </div>
+
+        <div class="plans">
+          {
+            formules.map((f) => (
+              <article
+                class:list={['plan', f.miseEnAvant && 'plan--featured']}
+              >
+                {f.miseEnAvant && f.places && (
+                  <p class="plan-flag">{f.places} places seulement</p>
+                )}
+                <h3>{f.nom}</h3>
+                <p class="plan-resume">{f.resume}</p>
+
+                <p class="plan-price">
+                  {promo && <s>{fmt(f.prixComptant)} €</s>}
+                  <strong>
+                    {fmt(prixRemise(f.prixComptant))} €{' '}
+                    <em>{offre.mentionTva}</em>
+                  </strong>
+                  <span>
+                    ou {f.nbMensualites} × {fmt(prixRemise(f.prixMensuel))}{' '}
+                    €&nbsp;{offre.mentionTva}{sansFrais(f) ? ', sans frais' : ''}
+                  </span>
+                </p>
+
+                <ul class="plan-list">
+                  {f.inclus.map((item) => <li>{item}</li>)}
+                </ul>
+
+                {f.enPlus.length > 0 && (
+                  <div class="plan-extra">
+                    <p class="plan-extra-title">
+                      Et deux heures avec moi, en tête à tête
+                    </p>
+                    {f.enPlus.map((e) => (
+                      <div class="plan-extra-item">
+                        <h4>{e.titre}</h4>
+                        <p>{e.texte}</p>
+                      </div>
+                    ))}
+                    <p class="plan-extra-note">
+                      Les deux séances se calent selon tes disponibilités, en
+                      visio, à n'importe quel moment de la saison.
+                    </p>
+                  </div>
+                )}
+
+                <a
+                  class:list={[
+                    'btn',
+                    f.miseEnAvant ? 'btn--primary' : 'btn--ghost',
+                    'plan-cta',
+                  ]}
+                  href={lienAchat(f)}
+                >
+                  Choisir « {f.nom} »
+                </a>
+              </article>
+            ))
+          }
+        </div>
+
+        <p class="pricing-note">
+          Tous les prix sont indiqués {offre.mentionTva}. Paiement sécurisé par
+          Stripe via Podia.{' '}
+          <a href={`mailto:${offre.emailDevis}?subject=Devis%20Acad%C3%A9mie%20des%20D%C3%A9coinc%C3%A9s%20du%20Crayon%20${cohorte.annees}`}>
+            Demande un devis employeur
+          </a>{' '}
+          si ton entreprise prend la formation en charge. L'Académie n'est en
+          revanche pas éligible au CPF.
+        </p>
       </div>
     </section>
 
@@ -474,13 +567,13 @@ const jsonLd = [
     <!-- ================= CTA FINAL ================= -->
     <section class="section final-cta">
       <div class="container final-inner">
-        <p class="script">On se retrouve en septembre&nbsp;?</p>
+        <p class="script">On se retrouve en octobre&nbsp;?</p>
         <h2>La prochaine cohorte démarre le {lives[0].libelle.toLowerCase()}</h2>
         <p class="lead">
           Tu peux commencer les modules dès aujourd'hui et arriver au live de
           lancement avec tes premières questions déjà posées.
         </p>
-        <a class="btn btn--primary" href={offre.checkoutUrl}>
+        <a class="btn btn--primary" href={lienPrincipal}>
           Rejoindre la cohorte {cohorte.annees}
         </a>
       </div>
@@ -508,11 +601,12 @@ const jsonLd = [
       <p class="sticky-text">
         <strong>Académie {cohorte.annees}</strong>
         <span>
-          {prixFmt} € {offre.mentionTva} ou {offre.nbMensualites} ×
-          {offre.prixMensuel} € {offre.mentionTva}
+          {promo && <s>{fmt(principale.prixComptant)} €</s>}
+          {fmt(prixPrincipal)} € {offre.mentionTva} ou{' '}
+          {principale.nbMensualites} × {fmt(mensuelPrincipal)} €
         </span>
       </p>
-      <a class="btn btn--primary" href={offre.checkoutUrl}>Je m'inscris</a>
+      <a class="btn btn--primary" href={lienPrincipal}>Je m'inscris</a>
     </div>
   </div>
 </Layout>
@@ -554,13 +648,16 @@ const jsonLd = [
     margin-bottom: var(--space-6);
   }
 
+  /* Le surligneur doit mordre le bas des lettres, pas leur milieu : trop haut,
+     il se lit comme un texte barré — d'autant plus ici, où un vrai prix barré
+     apparaît quelques lignes plus bas. */
   .hl {
     background: linear-gradient(
       to bottom,
-      transparent 62%,
-      var(--color-yellow) 62%,
-      var(--color-yellow) 92%,
-      transparent 92%
+      transparent 74%,
+      var(--color-yellow) 74%,
+      var(--color-yellow) 99%,
+      transparent 99%
     );
     padding-inline: 0.08em;
   }
@@ -1197,50 +1294,158 @@ const jsonLd = [
     }
   }
 
-  /* ---------- Tarif ---------- */
-  .pricing {
-    max-width: 720px;
+  /* ---------- Bandeau de remise ---------- */
+  .promo-bar {
+    background: var(--color-yellow);
+    color: var(--color-ink-solid);
+  }
+
+  .promo-inner {
+    padding-block: var(--space-3);
+  }
+
+  .promo-bar p {
+    margin: 0;
+    font-size: var(--text-sm);
+    text-align: center;
+    text-wrap: balance;
+  }
+
+  /* Sur mobile le bandeau atteignait 123px de haut, soit un sixième d'écran
+     avant même le logo. On garde les deux échéances, on coupe le reste. */
+  @media (max-width: 640px) {
+    .promo-bar p {
+      font-size: var(--text-xs);
+    }
+    .promo-aside {
+      display: none;
+    }
+  }
+
+  /* ---------- Illustrations ---------- */
+  .hero-scene {
+    max-width: 460px;
+    margin: var(--space-12) auto 0;
+    color: var(--color-navy);
+  }
+
+  .skill-doodle {
+    width: 68px;
+    margin-bottom: var(--space-4);
+    color: var(--color-navy);
+  }
+
+  /* ---------- Formules ---------- */
+  .pricing-head {
+    max-width: 640px;
     margin-inline: auto;
     text-align: center;
   }
 
-  .pricing-amount {
+  .pricing-head .lead {
+    margin-inline: auto;
+  }
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    gap: var(--space-8);
+    align-items: start;
+    margin-top: var(--space-12);
+  }
+
+  .plan {
+    position: relative;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: var(--space-2);
-    margin-block: var(--space-8);
+    padding: var(--space-10) var(--space-8) var(--space-8);
+    border: 1px solid rgba(255, 253, 250, 0.22);
+    border-radius: var(--radius-md);
+    background: rgba(255, 253, 250, 0.05);
   }
 
-  .pricing-amount strong {
+  .plan--featured {
+    border-color: var(--color-yellow);
+    background: rgba(255, 203, 0, 0.07);
+  }
+
+  /* La pastille chevauche la bordure : elle doit se lire comme une étiquette
+     agrafée sur la carte, pas comme une ligne de texte de plus. */
+  .plan-flag {
+    position: absolute;
+    top: 0;
+    left: var(--space-8);
+    transform: translateY(-50%);
+    margin: 0;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-yellow);
+    color: var(--color-ink-solid);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .plan h3 {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--space-2);
+  }
+
+  .plan-resume {
+    color: rgba(255, 253, 250, 0.78);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+  }
+
+  .plan-price {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-bottom: var(--space-8);
+  }
+
+  .plan-price s,
+  .hero-price-was,
+  .sticky-text s {
+    color: rgba(255, 253, 250, 0.55);
+    font-size: var(--text-sm);
+    text-decoration-thickness: 2px;
+  }
+
+  .hero-price-was,
+  .sticky-text s {
+    color: var(--color-muted);
+    margin-right: var(--space-2);
+  }
+
+  .plan-price strong {
     font-family: var(--font-display);
-    font-size: var(--text-4xl);
+    font-size: var(--text-3xl);
     color: var(--color-yellow);
-    line-height: 1;
+    line-height: 1.05;
   }
 
-  /* La mention légale ne doit pas peser autant que le montant, mais rester
-     lisible : on la descend d'un cran sans la reléguer en petits caractères. */
-  .pricing-amount strong em {
+  .plan-price strong em {
     font-style: normal;
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
     letter-spacing: var(--tracking-wide);
   }
 
-  .pricing-amount span {
+  .plan-price span {
     font-size: var(--text-sm);
-    color: rgba(255, 253, 250, 0.78);
+    color: rgba(255, 253, 250, 0.72);
   }
 
-  .pricing-list {
-    display: inline-block;
-    text-align: left;
-    margin: 0 0 var(--space-10);
+  .plan-list {
+    margin: 0 0 var(--space-8);
     padding: 0;
     list-style: none;
   }
 
-  .pricing-list li {
+  .plan-list li {
     position: relative;
     padding-left: var(--space-8);
     margin-bottom: var(--space-3);
@@ -1248,7 +1453,7 @@ const jsonLd = [
     font-size: var(--text-sm);
   }
 
-  .pricing-list li::before {
+  .plan-list li::before {
     content: '✓';
     position: absolute;
     left: 0;
@@ -1257,19 +1462,58 @@ const jsonLd = [
     font-weight: 700;
   }
 
-  .pricing-cta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
+  .plan-extra {
+    margin-bottom: var(--space-8);
+    padding-top: var(--space-6);
+    border-top: 1px dashed rgba(255, 203, 0, 0.5);
+  }
+
+  .plan-extra-title {
+    font-family: var(--font-script);
+    font-size: var(--text-xl);
+    color: var(--color-yellow);
+    margin-bottom: var(--space-5);
+  }
+
+  .plan-extra-item {
+    margin-bottom: var(--space-5);
+  }
+
+  .plan-extra-item h4 {
+    font-size: var(--text-base);
+    color: var(--color-white);
+    margin-bottom: var(--space-1);
+  }
+
+  .plan-extra-item p {
+    font-size: var(--text-sm);
+    color: rgba(255, 253, 250, 0.78);
+    margin: 0;
+  }
+
+  .plan-extra-note {
+    font-size: var(--text-xs);
+    color: rgba(255, 253, 250, 0.62);
+    margin: 0;
+  }
+
+  /* Pousse le bouton en bas quelle que soit la hauteur du contenu, pour que
+     les deux cartes alignent leurs actions. */
+  .plan-cta {
+    margin-top: auto;
+    width: 100%;
   }
 
   .pricing-note {
+    margin: var(--space-12) auto 0;
+    max-width: 620px;
+    text-align: center;
     font-size: var(--text-sm);
     color: rgba(255, 253, 250, 0.7);
-    max-width: 520px;
-    margin-inline: auto;
+  }
+
+  .pricing-note a {
+    color: var(--color-yellow);
   }
 
   /* ---------- FAQ ---------- */

@@ -4,6 +4,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Le palier de remise early bird est figé au moment du build : sans
+  # reconstruction quotidienne, la page continuerait d'afficher −30 % après
+  # le 15 septembre. Ne pas retirer.
+  schedule:
+    - cron: '17 4 * * *'
 
 concurrency:
   group: deploy-academie

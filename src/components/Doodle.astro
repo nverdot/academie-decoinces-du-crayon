@@ -1,0 +1,186 @@
+---
+/* ---------------------------------------------------------------------------
+   Illustrations « au feutre ».
+   Toutes suivent les mêmes règles pour former une famille cohérente :
+   tracé unique en currentColor, extrémités rondes, épaisseur constante, et
+   une tache jaune posée EN DESSOUS du trait et légèrement décalée — c'est le
+   décalage du logo Décoincés du Crayon, et c'est ce qui donne l'impression du
+   surligneur passé après coup plutôt que du pictogramme vectoriel.
+   Les tracés sont volontairement imparfaits : lignes non parallèles, cercles
+   qui ne se referment pas tout à fait.
+--------------------------------------------------------------------------- */
+
+interface Props {
+  name:
+    | 'cadrer'
+    | 'concevoir'
+    | 'preparer'
+    | 'tenir'
+    | 'atterrir'
+    | 'solide'
+    | 'scene';
+  class?: string;
+}
+
+const { name, class: className } = Astro.props;
+---
+
+{
+  name === 'cadrer' && (
+    <svg viewBox="0 0 100 100" class:list={['doodle', className]} aria-hidden="true">
+      <path class="blob" d="M20 26c14-7 44-9 58 1 9 7 8 26-2 32-6 4-19 5-30 4l-14 11 2-13c-13-5-20-15-18-24z" />
+      <path class="ink" d="M18 30c0-9 15-16 33-16s32 7 32 16-14 17-32 17c-4 0-8 0-12-1l-15 11 3-14c-6-3-9-8-9-13z" />
+      <path class="ink" d="M43 26c1-5 6-7 10-6 5 1 7 6 4 9-2 3-6 3-7 6" />
+      <path class="ink thin" d="M50 41v1" />
+      <path class="ink thin" d="M22 63c9 4 20 6 30 5" />
+      <path class="ink thin" d="M28 74c6 2 12 3 18 3" />
+    </svg>
+  )
+}
+
+{
+  name === 'concevoir' && (
+    <svg viewBox="0 0 100 100" class:list={['doodle', className]} aria-hidden="true">
+      <path class="blob" d="M22 20h58v62H22z" />
+      <path class="ink" d="M19 16h60c1 0 2 1 2 2v64c0 1-1 2-2 2H19c-1 0-2-1-2-2V18c0-1 1-2 2-2z" />
+      <path class="ink" d="M25 55l9-1 5-14 7 25 6-19 5 10 6-4 8 1" />
+      <path class="ink thin" d="M26 28h32" />
+      <path class="ink thin" d="M26 37h22" />
+      <path class="ink thin" d="M26 71h30" />
+      <path class="ink thin" d="M63 70l5 5 8-11" />
+    </svg>
+  )
+}
+
+{
+  name === 'preparer' && (
+    <svg viewBox="0 0 100 100" class:list={['doodle', className]} aria-hidden="true">
+      <path class="blob" d="M26 18h50v42H26z" />
+      <path class="ink" d="M22 15h56v45H22z" />
+      <path class="ink" d="M30 60L22 88" />
+      <path class="ink" d="M70 60l8 28" />
+      <path class="ink" d="M50 60v20" />
+      <path class="ink thin" d="M31 27c6-3 13-3 19 1" />
+      <path class="ink thin" d="M33 39c9-4 20-3 28 2" />
+      <path class="ink thin" d="M58 25c4-1 8-1 11 1" />
+    </svg>
+  )
+}
+
+{
+  name === 'tenir' && (
+    <svg viewBox="0 0 100 100" class:list={['doodle', className]} aria-hidden="true">
+      <circle class="blob" cx="30" cy="36" r="13" />
+      <circle class="blob" cx="70" cy="60" r="11" />
+      <path class="ink" d="M14 34c0-8 7-14 15-14s15 6 15 14-7 14-15 14c-3 0-5 0-7-1l-8 6 2-8c-1-3-2-7-2-11z" />
+      <path class="ink" d="M56 62c0-7 6-12 13-12s13 5 13 12-6 12-13 12c-2 0-4 0-6-1l-7 5 2-7c-1-3-2-6-2-9z" />
+      <path class="ink thin" d="M23 31h12" />
+      <path class="ink thin" d="M23 38h8" />
+      <path class="ink thin" d="M64 59h10" />
+      <path class="ink thin" d="M46 78c-8-2-14-8-16-16" />
+      <path class="ink thin" d="M28 61l2 4 5-1" />
+    </svg>
+  )
+}
+
+{
+  name === 'atterrir' && (
+    <svg viewBox="0 0 100 100" class:list={['doodle', className]} aria-hidden="true">
+      <circle class="blob" cx="72" cy="66" r="15" />
+      <path class="ink" d="M12 24c14 22 28 34 44 40 6 2 11 3 16 3" />
+      <path class="ink" d="M60 62l12 5-4 12" />
+      <path class="ink" d="M28 84V50" />
+      <path class="ink" d="M28 50l20 5-20 7" />
+      <path class="ink thin" d="M16 84h24" />
+    </svg>
+  )
+}
+
+{
+  name === 'solide' && (
+    <svg viewBox="0 0 100 100" class:list={['doodle', className]} aria-hidden="true">
+      <circle class="blob" cx="50" cy="30" r="13" />
+      <circle class="ink" cx="50" cy="29" r="12" />
+      <path class="ink" d="M50 41v26" />
+      <path class="ink" d="M50 67l-14 19" />
+      <path class="ink" d="M50 67l15 19" />
+      <path class="ink" d="M32 52c8 4 28 4 36 0" />
+      <path class="ink thin" d="M20 30c-4 8-4 18 0 26" />
+      <path class="ink thin" d="M80 30c4 8 4 18 0 26" />
+    </svg>
+  )
+}
+
+{
+  name === 'scene' && (
+    <svg viewBox="0 0 340 170" class:list={['doodle', 'doodle--scene', className]} aria-hidden="true">
+      {/* Le paperboard */}
+      <path class="blob" d="M34 16h132v92H34z" />
+      <path class="ink" d="M30 12h136v96H30z" />
+      <path class="ink" d="M52 108l-14 48" />
+      <path class="ink" d="M146 108l14 48" />
+      <path class="ink" d="M98 108v34" />
+      {/* Ce qui est tracé dessus : un agenda en électrocardiogramme */}
+      <path class="ink thin" d="M46 40l16-2 10-16 12 34 9-24 8 14 10-6 18 2 20-4" />
+      <path class="ink thin" d="M46 62h60" />
+      <path class="ink thin" d="M46 76h40" />
+      <path class="ink thin" d="M118 70l6 7 12-15" />
+      {/* La facilitatrice, feutre en main */}
+      <circle class="ink" cx="212" cy="44" r="14" />
+      <path class="ink" d="M212 58v34" />
+      <path class="ink" d="M212 92l-11 44" />
+      <path class="ink" d="M212 92l13 44" />
+      <path class="ink" d="M212 68l-24-16" />
+      <path class="ink" d="M212 68l26 8" />
+      <path class="ink" d="M182 48l10 6" />
+      {/* Les bulles du groupe */}
+      <path class="blob" d="M258 20h58v34h-58z" />
+      <path class="ink" d="M254 18c0-5 5-8 12-8h38c7 0 12 3 12 8v16c0 5-5 8-12 8h-30l-10 7 2-8c-7-1-12-5-12-9z" />
+      <path class="ink thin" d="M266 24h30" />
+      <path class="ink thin" d="M266 32h18" />
+      <path class="ink" d="M266 96c0-4 4-7 10-7h34c6 0 10 3 10 7v14c0 4-4 7-10 7h-26l-9 6 2-7c-6-1-11-4-11-8z" />
+      <path class="ink thin" d="M276 101h24" />
+    </svg>
+  )
+}
+
+<style>
+  .doodle {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Le trait : c'est lui qui porte le dessin. */
+  .doodle :global(.ink),
+  .doodle .ink {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 4.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .doodle .thin {
+    stroke-width: 2.8;
+    opacity: 0.55;
+  }
+
+  /* La tache de surligneur, sous le trait et décalée : jamais alignée au
+     pixel près, c'est ce décalage qui fait « posé à la main ». */
+  .doodle .blob {
+    fill: var(--color-yellow);
+    stroke: none;
+    opacity: 0.85;
+    transform: translate(-3px, 4px) rotate(-1.2deg);
+    transform-origin: center;
+  }
+
+  .doodle--scene .ink {
+    stroke-width: 4;
+  }
+
+  .doodle--scene .thin {
+    stroke-width: 2.4;
+  }
+</style>
