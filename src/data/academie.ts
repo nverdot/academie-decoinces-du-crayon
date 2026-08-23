@@ -80,8 +80,11 @@ export const formules = [
     id: 'academie',
     nom: 'Académie',
     resume: "Le parcours complet, en groupe.",
-    prixComptant: 1800,
-    prixMensuel: 180,
+    // 1 800 € reste le plafond (formule Mentorat) : c'est le prix pratiqué en
+    // 2025-2026, on ne le dépasse pas. L'entrée descend à 1 400 € pour ouvrir
+    // l'accès, l'écart de 400 € valorisant les 2 h de mentorat à 200 €/h.
+    prixComptant: 1400,
+    prixMensuel: 140,
     nbMensualites: 10,
     offerId: '',
     slugPodia: 'academie-des-decoinces-du-crayon-2026-2027',
@@ -100,10 +103,9 @@ export const formules = [
     id: 'mentorat',
     nom: 'Académie + Mentorat',
     resume: "Le parcours complet, plus deux heures en tête à tête.",
-    // À CONFIRMER : 600 € d'écart pour 2 h de mentorat individuel avec un
-    // coach certifié. À ajuster selon ton tarif horaire d'accompagnement.
-    prixComptant: 2400,
-    prixMensuel: 240,
+    // Plafond volontairement maintenu au tarif de la cohorte 2025-2026.
+    prixComptant: 1800,
+    prixMensuel: 180,
     nbMensualites: 10,
     offerId: '',
     slugPodia: 'academie-des-decoinces-du-crayon-2026-2027-mentorat',

@@ -23,13 +23,30 @@ modifier ce fichier.
 
 | Quoi | Où | Statut |
 |---|---|---|
-| Prix « Académie » (1 800 € TTC) | `formules[0]` | repris de 2025-2026, **à confirmer** |
-| Prix « Académie + Mentorat » (2 400 € TTC) | `formules[1]` | **proposition** : +600 € pour 2 h de mentorat individuel, à caler sur ton tarif horaire |
+| Prix « Académie » (1 400 € TTC) | `formules[0]` | **proposition** : tarif d'entrée abaissé pour ouvrir l'accès |
+| Prix « Académie + Mentorat » (1 800 € TTC) | `formules[1]` | plafond maintenu au tarif pratiqué en 2025-2026 ; l'écart de 400 € valorise les 2 h de mentorat à 200 €/h |
 | Nombre de places en Mentorat (8) | `formules[1].places` | **à confirmer** selon ce que ton agenda absorbe |
 | `offerId` Podia des deux formules | `formules[].offerId` | **vides** — sans eux, aucun paiement possible. L'offre 2025-2026 portait l'id `2963419` |
 | Coupons `ACA30` et `ACA20` | `paliers[].code` | `ACA30` existait en 2025-2026 ; **`ACA20` est à créer côté Podia** |
 | Dates des 7 lives | `lives` | premier mardi du mois, octobre 2026 → avril 2027, **à confirmer** |
 | Nombre de laboratoires | `chiffres` / `laboratoires` | la page 2025-2026 annonçait 10 mais en listait 9 ; ici on annonce 9 |
+
+### Ce que paie réellement l'acheteur
+
+| Formule | Plein | −30 % | −20 % |
+|---|---|---|---|
+| Académie | 1 400 € | **980 €** ou 10 × 98 € | 1 120 € ou 10 × 112 € |
+| Académie + Mentorat | 1 800 € | **1 260 €** ou 10 × 126 € | 1 440 € ou 10 × 144 € |
+
+À surveiller : la remise se cumule avec le tarif d'entrée abaissé. L'accès le
+moins cher tombe à **980 €**, contre 1 260 € réellement pratiqués en 2025-2026
+(le lien `?coupon=ACA30` était permanent sur l'ancienne page). Si cette érosion
+n'est pas voulue, remonter `formules[0].prixComptant` plutôt que toucher aux
+paliers.
+
+À l'inverse, une coïncidence utile à exploiter en communication : à −30 %, la
+formule Mentorat revient à 1 260 € — exactement le prix payé l'an dernier pour
+le parcours seul, mentorat en plus.
 
 ## Early bird : deux paliers
 

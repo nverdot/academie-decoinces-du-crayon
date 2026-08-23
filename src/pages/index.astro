@@ -165,6 +165,7 @@ const jsonLd = [
             Rejoindre la cohorte {cohorte.annees}
           </a>
           <p class="hero-price">
+            À partir de{' '}
             {promo && (
               <s class="hero-price-was">{fmt(principale.prixComptant)} €</s>
             )}
@@ -601,7 +602,7 @@ const jsonLd = [
       <p class="sticky-text">
         <strong>Académie {cohorte.annees}</strong>
         <span>
-          {promo && <s>{fmt(principale.prixComptant)} €</s>}
+          À partir de {promo && <s>{fmt(principale.prixComptant)} €</s>}
           {fmt(prixPrincipal)} € {offre.mentionTva} ou{' '}
           {principale.nbMensualites} × {fmt(mensuelPrincipal)} €
         </span>
