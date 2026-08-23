@@ -27,14 +27,39 @@ modifier ce fichier.
 | Lien de checkout Podia | `src/data/academie.ts` → `offre.checkoutUrl` | l'`offer_id` de 2025-2026 était `2963419`, **il faut celui de la nouvelle offre** |
 | Dates des 7 lives | `src/data/academie.ts` → `lives` | mardis calés sur le rythme 2025-2026, **à confirmer** |
 | Nombre de laboratoires | `src/data/academie.ts` → `chiffres` / `laboratoires` | la page 2025-2026 annonçait « 10 laboratoires » mais n'en listait que 9 ; ici on annonce 9. À trancher. |
-| Image de partage | `public/og-academie.jpg` | **manquante** — 1200 × 630 px, référencée par les balises Open Graph |
 | Codes promo | — | la page 2025-2026 avait un lien « remise de 30 % » (`?coupon=ACA30`). Non repris ici. |
+
+## Ressources visuelles
+
+| Fichier | Origine |
+|---|---|
+| `public/img/logo-decoinces-du-crayon.png` | visuel de partage de la boutique Podia, rogné et fond rendu transparent |
+| `public/img/logo-decoinces-du-crayon-dark.png` | même logo, lettres noires remplacées par du crème pour le mode sombre ; servi par `<picture>` sur `prefers-color-scheme: dark` |
+| `public/favicon.png` | favicon de la boutique Podia |
+| `public/og-academie.jpg` | composée en local (logo + titre + pastille cohorte), à régénérer si le millésime change |
+| `src/assets/nicolas-portrait.png` | repris de `nicolasverdot-site`, converti en WebP au build par `astro:assets` |
+| `public/logos/*` | logos clients repris de `nicolasverdot-site/src/data/clients.ts`, déjà publics sur ce site |
+
+Les logos clients sont présentés sur la page comme des **références de praticien
+de Nicolas**, pas comme des élèves de l'Académie. Ne pas modifier cette
+formulation : elle est ce qui rend leur présence honnête.
 
 ## Déploiement FTP
 
 Deux voies, au choix.
 
-### 1. Automatique à chaque `git push` (recommandé)
+### 1. Automatique à chaque `git push` (en place)
+
+Le dépôt est **[nverdot/academie-decoinces-du-crayon](https://github.com/nverdot/academie-decoinces-du-crayon)**,
+les quatre secrets sont renseignés, et `FTP_SERVER_DIR` vaut
+`/academie.decoincesducrayon.com/` — le dossier du sous-domaine, surtout pas la
+racine du compte FTP, qui sert le domaine principal. Une étape « Vérifier la
+cible FTP » refuse le déploiement si ce secret vaut `/`.
+
+⚠️ Le `.htaccess` à la racine du compte FTP redirige vers `www` **tous** les
+sous-domaines absents de sa liste blanche. `academie` y a été ajouté. Tout
+nouveau sous-domaine devra l'être aussi, sinon il sera redirigé en silence.
+
 
 `.github/workflows/deploy.yml` construit le site et le pousse en FTP à chaque
 push sur `main`. À configurer une seule fois dans les *Settings → Secrets and
