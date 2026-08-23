@@ -28,6 +28,25 @@ jobs:
       - name: Build site
         run: npm run build
 
+      # Garde-fou : la racine FTP est le dossier du site principal. Y déployer
+      # l'Académie écraserait nicolasverdot.com. On refuse donc « / », un
+      # chemin vide, ou un chemin qui ne nomme pas un sous-dossier.
+      - name: Vérifier la cible FTP
+        env:
+          DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          if [ -z "$DIR" ]; then
+            echo "::error::Le secret FTP_SERVER_DIR est vide."
+            exit 1
+          fi
+          if [ "$DIR" = "/" ] || [ "$DIR" = "." ] || [ "$DIR" = "./" ]; then
+            echo "::error::FTP_SERVER_DIR vaut « $DIR », c'est-à-dire la racine du compte FTP."
+            echo "::error::Déployer là écraserait le site qui s'y trouve déjà."
+            echo "::error::Renseignez le dossier du sous-domaine academie.decoincesducrayon.com."
+            exit 1
+          fi
+          echo "Cible FTP acceptée : $DIR"
+
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:

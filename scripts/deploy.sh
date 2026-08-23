@@ -23,6 +23,19 @@ set -a; source .env; set +a
 : "${FTP_PASSWORD:?FTP_PASSWORD manquant dans .env}"
 : "${FTP_SERVER_DIR:?FTP_SERVER_DIR manquant dans .env}"
 
+# Même garde-fou que la CI, et il compte davantage ici : ce script utilise
+# « mirror --delete », qui supprime du serveur tout ce qui n'est pas dans dist/.
+# Lancé sur la racine, il effacerait le site voisin au lieu de simplement
+# l'écraser.
+case "$FTP_SERVER_DIR" in
+  "/" | "." | "./" | "")
+    echo "✗ FTP_SERVER_DIR vaut « ${FTP_SERVER_DIR} » : c'est la racine du compte FTP." >&2
+    echo "  Ce script supprime les fichiers absents de dist/ — il effacerait le site" >&2
+    echo "  qui s'y trouve. Renseignez le dossier du sous-domaine dans .env." >&2
+    exit 1
+    ;;
+esac
+
 if ! command -v lftp >/dev/null 2>&1; then
   echo "✗ lftp introuvable. Installez-le avec : brew install lftp" >&2
   exit 1
