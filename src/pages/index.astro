@@ -38,13 +38,14 @@ const fmt = (n: number) => eur.format(n);
 // Formule mise en avant dans le hero, la barre collante et le CTA final.
 const principale = formulePrincipale;
 const lienPrincipal = lienAchat(principale);
-const prixPrincipal = prixRemise(principale.prixComptant);
-const mensuelPrincipal = prixRemise(principale.prixMensuel);
+const prixPrincipal = prixRemise(principale.prixComptant, principale.remisable);
 
 // « Sans frais » ne s'affiche que si l'échelonnement ne coûte réellement rien
 // de plus — la mention se met à jour toute seule si un tarif change.
-const sansFrais = (f: typeof principale) =>
-  prixRemise(f.prixMensuel) * f.nbMensualites === prixRemise(f.prixComptant);
+const sansFrais = (f: (typeof formules)[number]) =>
+  f.prixMensuel !== null &&
+  prixRemise(f.prixMensuel, f.remisable) * f.nbMensualites ===
+    prixRemise(f.prixComptant, f.remisable);
 
 const jsonLd = [
   {
@@ -166,12 +167,8 @@ const jsonLd = [
           </a>
           <p class="hero-price">
             À partir de{' '}
-            {promo && (
-              <s class="hero-price-was">{fmt(principale.prixComptant)} €</s>
-            )}
-            <strong>{fmt(prixPrincipal)} € {offre.mentionTva}</strong> ou
-            {principale.nbMensualites} × {fmt(mensuelPrincipal)} €
-            {offre.mentionTva}
+            <strong>{fmt(prixPrincipal)} € {offre.mentionTva}</strong> ·
+            trois formules, de l'accès en autonomie au mentorat individuel
           </p>
         </div>
 
@@ -464,10 +461,11 @@ const jsonLd = [
       <div class="container">
         <div class="pricing-head">
           <p class="eyebrow">Rejoindre la {cohorte.label.toLowerCase()}</p>
-          <h2>Deux façons de suivre l'Académie</h2>
+          <h2>Trois façons de suivre l'Académie</h2>
           <p class="lead">
-            Le contenu est le même dans les deux cas. Ce qui change, c'est le
-            temps que je passe avec toi en tête à tête.
+            Le contenu de formation est le même partout. Ce qui change, c'est
+            combien de temps tu y as accès, et si tu le traverses seul ou
+            accompagné.
           </p>
         </div>
 
@@ -484,19 +482,28 @@ const jsonLd = [
                 <p class="plan-resume">{f.resume}</p>
 
                 <p class="plan-price">
-                  {promo && <s>{fmt(f.prixComptant)} €</s>}
+                  {promo && f.remisable && <s>{fmt(f.prixComptant)} €</s>}
                   <strong>
-                    {fmt(prixRemise(f.prixComptant))} €{' '}
+                    {fmt(prixRemise(f.prixComptant, f.remisable))} €{' '}
                     <em>{offre.mentionTva}</em>
                   </strong>
-                  <span>
-                    ou {f.nbMensualites} × {fmt(prixRemise(f.prixMensuel))}{' '}
-                    €&nbsp;{offre.mentionTva}{sansFrais(f) ? ', sans frais' : ''}
-                  </span>
+                  {f.prixMensuel !== null && (
+                    <span>
+                      ou {f.nbMensualites} ×{' '}
+                      {fmt(prixRemise(f.prixMensuel, f.remisable))}{' '}
+                      €&nbsp;{offre.mentionTva}{sansFrais(f) ? ', sans frais' : ''}
+                    </span>
+                  )}
+                </p>
+
+                <p class="plan-acces">
+                  <span class="plan-acces-tag">{f.acces}</span>
+                  {f.accesDetail}
                 </p>
 
                 <ul class="plan-list">
                   {f.inclus.map((item) => <li>{item}</li>)}
+                  {f.exclus.map((item) => <li class="plan-out">{item}</li>)}
                 </ul>
 
                 {f.enPlus.length > 0 && (
@@ -602,9 +609,7 @@ const jsonLd = [
       <p class="sticky-text">
         <strong>Académie {cohorte.annees}</strong>
         <span>
-          À partir de {promo && <s>{fmt(principale.prixComptant)} €</s>}
-          {fmt(prixPrincipal)} € {offre.mentionTva} ou{' '}
-          {principale.nbMensualites} × {fmt(mensuelPrincipal)} €
+          Trois formules à partir de {fmt(prixPrincipal)} € {offre.mentionTva}
         </span>
       </p>
       <a class="btn btn--primary" href={lienPrincipal}>Je m'inscris</a>
@@ -1440,6 +1445,33 @@ const jsonLd = [
     color: rgba(255, 253, 250, 0.72);
   }
 
+  /* La durée d'accès est le vrai axe de différence entre les formules :
+     elle mérite sa propre ligne, pas une puce noyée dans la liste. */
+  .plan-acces {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-3);
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid rgba(255, 253, 250, 0.16);
+    font-size: var(--text-sm);
+    color: rgba(255, 253, 250, 0.78);
+  }
+
+  .plan-acces-tag {
+    flex: none;
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-yellow);
+    border-radius: var(--radius-pill);
+    color: var(--color-yellow);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
   .plan-list {
     margin: 0 0 var(--space-8);
     padding: 0;
@@ -1461,6 +1493,17 @@ const jsonLd = [
     top: 0;
     color: var(--color-yellow);
     font-weight: 700;
+  }
+
+  /* Ce que la formule ne contient pas. Énoncé franchement plutôt que passé
+     sous silence : c'est ce qui rend l'écart de prix compréhensible. */
+  .plan-list .plan-out {
+    color: rgba(255, 253, 250, 0.58);
+  }
+
+  .plan-list .plan-out::before {
+    content: '—';
+    color: rgba(255, 253, 250, 0.45);
   }
 
   .plan-extra {
@@ -1498,8 +1541,10 @@ const jsonLd = [
     margin: 0;
   }
 
-  /* Pousse le bouton en bas quelle que soit la hauteur du contenu, pour que
-     les deux cartes alignent leurs actions. */
+  /* Les cartes ne sont pas étirées (align-items: start) : leurs contenus vont
+     du simple au triple et l'égalisation creuserait 370px de vide sous la
+     formule d'entrée. Les boutons sont donc décalés, ce qui se lit très bien
+     sur une grille tarifaire. */
   .plan-cta {
     margin-top: auto;
     width: 100%;

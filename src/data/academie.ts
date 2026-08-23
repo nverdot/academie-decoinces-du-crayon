@@ -77,42 +77,80 @@ export const promoSuivante = promo
 ------------------------------------------------------------------------- */
 export const formules = [
   {
+    id: 'autonomie',
+    nom: 'En autonomie',
+    resume: 'Tout le contenu, sans accompagnement.',
+    // À CONFIRMER : le seuil visé était « moins de 490 € ».
+    prixComptant: 490,
+    // Pas d'échelonnement sur ce montant : dix prélèvements de 49 € coûtent
+    // plus en frais et en impayés qu'ils ne rapportent.
+    prixMensuel: null,
+    nbMensualites: 0,
+    // L'early bird ne s'applique pas ici. Volontaire : pendant la fenêtre de
+    // remise, l'écart avec l'Académie se resserre (490 € contre 980 €), ce qui
+    // pousse vers le haut au moment précis où l'on veut décider les gens.
+    remisable: false,
+    acces: '12 mois',
+    accesDetail: "Accès aux contenus pendant 12 mois à compter de ton inscription.",
+    offerId: '',
+    slugPodia: 'academie-des-decoinces-du-crayon-2026-2027-autonomie',
+    miseEnAvant: false,
+    places: null,
+    inclus: [
+      'Les 11 modules de formation, disponibles immédiatement',
+      'Les 9 laboratoires avancés et les cahiers d’exercices',
+    ],
+    exclus: [
+      'Pas de lives, pas de replays',
+      'Pas d’accès au groupe privé',
+      'Pas de mises à jour après ton année d’accès',
+    ],
+    enPlus: [],
+  },
+  {
     id: 'academie',
     nom: 'Académie',
-    resume: "Le parcours complet, en groupe.",
+    resume: 'Le parcours complet, en groupe, pour toujours.',
     // 1 800 € reste le plafond (formule Mentorat) : c'est le prix pratiqué en
-    // 2025-2026, on ne le dépasse pas. L'entrée descend à 1 400 € pour ouvrir
-    // l'accès, l'écart de 400 € valorisant les 2 h de mentorat à 200 €/h.
+    // 2025-2026, on ne le dépasse pas.
     prixComptant: 1400,
     prixMensuel: 140,
     nbMensualites: 10,
+    remisable: true,
+    acces: 'À vie',
+    accesDetail:
+      "Accès à vie, mises à jour comprises, et retour aux lives des cohortes suivantes chaque année.",
     offerId: '',
     slugPodia: 'academie-des-decoinces-du-crayon-2026-2027',
     miseEnAvant: false,
     places: null,
     inclus: [
-      '11 modules de formation, disponibles immédiatement',
-      '9 laboratoires avancés et les cahiers d’exercices',
+      'Tout ce que contient la formule En autonomie',
       '7 lives avec Nicolas, d’octobre 2026 à avril 2027',
       'Les replays et toutes les mises à jour futures, à vie',
-      'Le groupe privé et l’accès aux lives des cohortes suivantes',
+      'Le groupe privé et les lives des cohortes suivantes',
     ],
+    exclus: [],
     enPlus: [],
   },
   {
     id: 'mentorat',
     nom: 'Académie + Mentorat',
-    resume: "Le parcours complet, plus deux heures en tête à tête.",
+    resume: 'Le parcours complet, plus deux heures en tête à tête.',
     // Plafond volontairement maintenu au tarif de la cohorte 2025-2026.
     prixComptant: 1800,
     prixMensuel: 180,
     nbMensualites: 10,
+    remisable: true,
+    acces: 'À vie',
+    accesDetail: "Accès à vie, mises à jour et cohortes suivantes comprises.",
     offerId: '',
     slugPodia: 'academie-des-decoinces-du-crayon-2026-2027-mentorat',
     miseEnAvant: true,
     // À CONFIRMER : le nombre de places que ton agenda peut absorber.
     places: 8,
     inclus: ['Tout ce que contient la formule Académie'],
+    exclus: [],
     enPlus: [
       {
         titre: 'Séance 1 — Cadrer ta pratique',
@@ -128,16 +166,22 @@ export const formules = [
   },
 ];
 
-// La formule affichée dans le hero et la barre collante.
+// Formule citée dans le hero et la barre collante : l'entrée de gamme,
+// affichée en « à partir de ».
 export const formulePrincipale = formules[0];
 
 export type Formule = (typeof formules)[number];
 
 const BOUTIQUE = 'https://www.decoincesducrayon.com';
 
-/** Prix effectivement payé, remise appliquée si l'early bird court encore. */
-export function prixRemise(montant: number): number {
-  return promo ? Math.round(montant * (1 - promo.pourcentage / 100)) : montant;
+/**
+ * Prix effectivement payé. La remise ne s'applique qu'aux formules marquées
+ * `remisable` — l'entrée de gamme est vendue à son prix en toutes saisons.
+ */
+export function prixRemise(montant: number, remisable = true): number {
+  return promo && remisable
+    ? Math.round(montant * (1 - promo.pourcentage / 100))
+    : montant;
 }
 
 /**
@@ -149,7 +193,7 @@ export function lienAchat(formule: Formule): string {
   const base = `${BOUTIQUE}/${formule.slugPodia}/buy`;
   const params = new URLSearchParams();
   if (formule.offerId) params.set('offer_id', formule.offerId);
-  if (promo) params.set('coupon', promo.code);
+  if (promo && formule.remisable) params.set('coupon', promo.code);
   const q = params.toString();
   return q ? `${base}?${q}` : base;
 }
