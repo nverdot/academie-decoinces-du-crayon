@@ -1,0 +1,126 @@
+/* ---------------------------------------------------------------------------
+   Tokens — Académie des Décoincés du Crayon
+   Reprise de la charte "by Nicolas Verdot" (contrastes audités), avec un
+   accent jaune plus assumé : ici la marque est le crayon, pas le conseil.
+   Mode clair par défaut, mode sombre via [data-theme="dark"] et
+   prefers-color-scheme plus bas.
+--------------------------------------------------------------------------- */
+:root {
+  --color-navy: #122033;
+  --color-yellow: #ffcb00;
+  --color-yellow-ink: #efbc00;
+  --color-yellow-soft: #fff3c4;
+  --color-brick: #8f241e;
+  --color-red-bright: #e34335;
+  --color-blue: #173b73;
+  --color-blue-strong: #102a52;
+  --color-blue-soft: #dfe9ff;
+  --color-clay: #c1440e;
+  --color-clay-ink: #7a2b09;
+  --color-cream: #fcf8ef;
+  --color-surface: #fffdfa;
+  --color-surface-alt: #f6f0e2;
+  --color-ink: #122033;
+  --color-muted: #4c5158;
+  --color-border: #cfc3b1;
+
+  /* Constantes : ne changent jamais entre thèmes (surfaces toujours sombres). */
+  --color-white: #fffdfa;
+  --color-ink-solid: #0b1627;
+
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Inter', system-ui, sans-serif;
+  --font-script: 'Caveat', cursive;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --text-4xl: clamp(2.25rem, 4vw + 1rem, 3.25rem);
+  --text-5xl: clamp(2.75rem, 5.5vw + 1rem, 4.25rem);
+
+  --tracking-tight: -0.025em;
+  --tracking-wide: 0.08em;
+
+  /* Échelle d'espacement COMPLÈTE et contiguë : chaque pas existe, pour
+     qu'aucun var(--space-N) écrit dans un composant ne retombe à zéro. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-11: 2.75rem;
+  --space-12: 3rem;
+  --space-14: 3.5rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  --container-max: 1180px;
+  --prose-max: 720px;
+
+  --radius-sm: 14px;
+  --radius-md: 26px;
+  --radius-lg: 38px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 12px 30px rgba(18, 32, 51, 0.08);
+  --shadow-md: 0 26px 80px rgba(18, 32, 51, 0.12);
+  --shadow-lg: 0 40px 90px rgba(18, 32, 51, 0.16);
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-standard: 0.3s;
+  --duration-hover: 0.2s;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --color-navy: #f7f4ec;
+    --color-cream: #111318;
+    --color-surface: #1d2027;
+    --color-surface-alt: #232730;
+    --color-ink: #f7f4ec;
+    --color-muted: #d4d0c8;
+    --color-border: #3b414b;
+    --color-brick: #ff9a91;
+    --color-blue: #7da2d8;
+    --color-blue-strong: #29486f;
+    --color-blue-soft: #27364b;
+    --color-clay: #e08350;
+    --color-clay-ink: #f0b28c;
+    --color-yellow-soft: #3a3413;
+    --shadow-sm: 0 12px 30px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 26px 80px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 40px 90px rgba(0, 0, 0, 0.5);
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-navy: #f7f4ec;
+  --color-cream: #111318;
+  --color-surface: #1d2027;
+  --color-surface-alt: #232730;
+  --color-ink: #f7f4ec;
+  --color-muted: #d4d0c8;
+  --color-border: #3b414b;
+  --color-brick: #ff9a91;
+  --color-blue: #7da2d8;
+  --color-blue-strong: #29486f;
+  --color-blue-soft: #27364b;
+  --color-clay: #e08350;
+  --color-clay-ink: #f0b28c;
+  --color-yellow-soft: #3a3413;
+  --shadow-sm: 0 12px 30px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 26px 80px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 40px 90px rgba(0, 0, 0, 0.5);
+}

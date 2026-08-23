@@ -1,0 +1,20 @@
+{
+  "name": "academie-decoinces-du-crayon",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Page de vente de l'Académie des Décoincés du Crayon — cohorte 2026/2027",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "./scripts/deploy.sh",
+    "deploy:dry": "./scripts/deploy.sh --dry-run"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.2.1",
+    "astro": "^4.16.0"
+  }
+}
