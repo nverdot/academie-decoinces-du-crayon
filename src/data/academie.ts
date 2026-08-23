@@ -373,9 +373,55 @@ export const faq = [
 
 export const formateur = {
   nom: 'Nicolas Verdot',
-  role: 'Facilitateur graphique, coach certifié',
+  role: 'Facilitateur graphique et coach certifié',
+  accroche:
+    "J'ai appris la facilitation avant le dessin. C'est exactement dans cet ordre que je la transmets.",
   bio: [
-    "Je facilite des ateliers et des séminaires depuis plus de dix ans, pour des organisations comme Air France KLM, Schneider Electric, la SNCF, GRTgaz ou le CNAM. Le crayon est arrivé dans ma pratique bien après la facilitation, et c'est précisément l'ordre dans lequel je transmets les choses ici.",
-    "J'ai fondé le Sommet des Décoincés du Crayon, devenu l'un des rendez-vous de référence en France sur la pensée visuelle et la facilitation graphique, et j'anime la communauté qui vit autour toute l'année. Je suis aussi ambassadeur Neuland et engagé au sein d'ICA International, l'association mondiale de facilitation.",
+    "Je facilite des ateliers, des séminaires et des réunions de décision depuis plus de dix ans. Le crayon est arrivé dans ma pratique bien après : d'abord parce que je cherchais un moyen de rendre visible ce qu'un groupe était en train de se dire, ensuite parce que j'ai constaté qu'une idée dessinée se discute autrement qu'une idée écrite en liste.",
+    "C'est pour ça que l'Académie ne commence pas par le trait. Beaucoup de personnes qui me rejoignent dessinent déjà très bien — mieux que moi sur certains aspects — et butent pourtant sur le même mur : que faire du groupe qui est en face. Le dessin sans processus produit de jolies fresques dont personne ne fait rien.",
+    "J'ai fondé le Sommet des Décoincés du Crayon, devenu l'un des rendez-vous de référence en France sur la pensée visuelle et la facilitation graphique, et j'anime toute l'année la communauté qui s'est constituée autour. L'Académie est née de ce que j'y ai entendu, année après année : des praticiens compétents et isolés, qui n'avaient pas de méthode à eux.",
   ],
+};
+
+// Éléments de légitimité, tous vérifiables publiquement.
+export const credentials = [
+  {
+    titre: 'Fondateur du Sommet des Décoincés du Crayon',
+    texte:
+      "L'événement français de référence sur la pensée visuelle et la facilitation graphique, et la communauté qui le prolonge toute l'année.",
+  },
+  {
+    titre: 'Coach professionnel certifié',
+    texte:
+      "Une pratique d'accompagnement individuel qui nourrit directement la posture enseignée dans le module « Ton principal outil, toi ».",
+  },
+  {
+    titre: 'Ambassadeur Neuland',
+    texte:
+      'Partenaire de la marque de référence du matériel de facilitation visuelle, dont le laboratoire « boîte à outils » reprend les usages.',
+  },
+  {
+    titre: 'Engagé à ICA International',
+    texte:
+      "L'association mondiale de facilitation, ainsi qu'auprès d'ICA Bénin et Côte d'Ivoire pour la transmission des pratiques participatives.",
+  },
+];
+
+// Organisations pour lesquelles Nicolas facilite. Ce sont ses références de
+// praticien, PAS des élèves de l'Académie — la page doit le dire clairement.
+export const clients = [
+  { nom: 'Air France KLM', logo: '/logos/air-france-klm.png' },
+  { nom: 'Louis Vuitton', logo: '/logos/louis-vuitton.svg' },
+  { nom: 'PwC', logo: '/logos/pwc.webp' },
+  { nom: 'URSSAF', logo: '/logos/urssaf.webp' },
+  { nom: 'CEC', logo: '/logos/cec.png' },
+  { nom: 'JCI Monaco', logo: '/logos/jci-monaco.png' },
+  { nom: 'MG2Mix', logo: '/logos/mg2mix.png' },
+  { nom: 'Ressources', logo: '/logos/ressources.png' },
+];
+
+export const liens = {
+  murTemoignages: 'https://www.decoincesducrayon.com/temoignages',
+  linkedin: 'https://www.linkedin.com/in/nicolasverdot/',
+  siteMere: 'https://www.decoincesducrayon.com',
 };

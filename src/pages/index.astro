@@ -1,13 +1,18 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
+import portrait from '../assets/nicolas-portrait.png';
 import {
   chiffres,
+  clients,
   cohorte,
   competences,
+  credentials,
   faq,
   formateur,
   frictions,
   laboratoires,
+  liens,
   lives,
   modules,
   offre,
@@ -80,6 +85,28 @@ const jsonLd = [
 ---
 
 <Layout title={title} description={description} jsonLd={jsonLd}>
+  <header class="masthead">
+    <div class="container masthead-inner">
+      <a href="/" class="brand" aria-label="Académie des Décoincés du Crayon, accueil">
+        <picture>
+          <source
+            srcset="/img/logo-decoinces-du-crayon-dark.png"
+            media="(prefers-color-scheme: dark)"
+          />
+          <img
+            src="/img/logo-decoinces-du-crayon.png"
+            alt="Décoincés du Crayon"
+            width="1151"
+            height="200"
+            class="brand-logo"
+          />
+        </picture>
+        <span class="brand-sub">Académie</span>
+      </a>
+      <a class="masthead-cta" href={offre.checkoutUrl}>S'inscrire</a>
+    </div>
+  </header>
+
   <main id="contenu">
     <!-- ================= HERO ================= -->
     <section class="hero">
@@ -113,6 +140,11 @@ const jsonLd = [
           <li>7 lives en direct avec Nicolas</li>
           <li>Une communauté qui accumule les promotions</li>
         </ul>
+
+        <p class="hero-authority">
+          Animée par <strong>Nicolas Verdot</strong>, fondateur du Sommet des
+          Décoincés du Crayon, coach certifié et ambassadeur Neuland.
+        </p>
       </div>
     </section>
 
@@ -303,16 +335,79 @@ const jsonLd = [
             ))
           }
         </div>
+        <p class="testi-more">
+          Ces retours sont extraits du mur de témoignages des anciennes
+          promotions.
+          <a href={liens.murTemoignages}>Lire les récits complets</a>, avec le
+          détail de ce que chacune faisait avant et de ce qu'elle a changé
+          ensuite.
+        </p>
       </div>
     </section>
 
-    <!-- ================= FORMATEUR ================= -->
+    <!-- ================= QUI EST NICOLAS VERDOT ================= -->
     <section class="section section--alt" id="formateur">
       <div class="container">
-        <p class="eyebrow">Qui anime</p>
-        <h2>{formateur.nom}, {formateur.role}</h2>
-        <div class="bio">
-          {formateur.bio.map((p) => <p>{p}</p>)}
+        <p class="eyebrow">Qui anime l'Académie</p>
+        <h2>Qui est Nicolas Verdot&nbsp;?</h2>
+
+        <div class="who">
+          <div class="who-portrait">
+            <Image
+              src={portrait}
+              alt="Portrait de Nicolas Verdot, facilitateur graphique et coach certifié"
+              widths={[320, 480, 640]}
+              sizes="(max-width: 860px) 100vw, 380px"
+              class="portrait-img"
+              loading="lazy"
+            />
+            <p class="who-caption">
+              {formateur.nom} — {formateur.role}
+            </p>
+          </div>
+
+          <div class="who-text">
+            <p class="who-hook">{formateur.accroche}</p>
+            {formateur.bio.map((paragraphe) => <p>{paragraphe}</p>)}
+            <a class="who-link" href={liens.linkedin}>
+              Son parcours sur LinkedIn
+            </a>
+          </div>
+        </div>
+
+        <ul class="cred-grid">
+          {
+            credentials.map((c) => (
+              <li class="cred-card">
+                <h3>{c.titre}</h3>
+                <p>{c.texte}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="clients">
+          <p class="clients-intro">
+            Les organisations pour lesquelles je facilite ateliers, séminaires
+            et réunions de décision. Ce sont mes références de praticien, pas
+            des élèves de l'Académie — la méthode enseignée ici est celle que
+            j'utilise chez eux.
+          </p>
+          <ul class="clients-strip">
+            {
+              clients.map((c) => (
+                <li>
+                  <img
+                    src={c.logo}
+                    alt={c.nom}
+                    loading="lazy"
+                    decoding="async"
+                    height="40"
+                  />
+                </li>
+              ))
+            }
+          </ul>
         </div>
       </div>
     </section>
@@ -877,12 +972,229 @@ const jsonLd = [
     color: var(--color-muted);
   }
 
-  /* ---------- Bio ---------- */
-  .bio {
-    max-width: var(--prose-max);
-    margin-top: var(--space-6);
+  /* ---------- Bandeau de marque ---------- */
+  .masthead {
+    background: var(--color-cream);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .masthead-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    min-width: 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    text-decoration: none;
+    min-width: 0;
+  }
+
+  .brand-logo {
+    width: 190px;
+    height: auto;
+  }
+
+  /* « Académie » se lit comme la déclinaison du logo, pas comme un mot de
+     plus : petite capitale, séparée par un filet. */
+  .brand-sub {
+    padding-left: var(--space-3);
+    border-left: 1px solid var(--color-border);
+    font-family: var(--font-display);
+    font-size: var(--text-sm);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
     color: var(--color-muted);
+    white-space: nowrap;
+  }
+
+  .masthead-cta {
+    flex: none;
+    padding: var(--space-2) var(--space-5);
+    border: 2px solid var(--color-ink);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: background-color var(--duration-hover) var(--ease-out),
+      color var(--duration-hover) var(--ease-out);
+  }
+
+  .masthead-cta:hover {
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+
+  .hero-authority {
+    margin: var(--space-8) 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  /* ---------- Qui est Nicolas Verdot ---------- */
+  .who {
+    display: grid;
+    grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+    gap: var(--space-12);
+    align-items: start;
+    margin-top: var(--space-10);
+  }
+
+  .who-portrait {
+    min-width: 0;
+  }
+
+  .who-portrait :global(.portrait-img) {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .who-caption {
+    margin: var(--space-4) 0 0;
+    font-family: var(--font-script);
     font-size: var(--text-lg);
+    color: var(--color-clay);
+    line-height: 1.3;
+  }
+
+  .who-text {
+    min-width: 0;
+    color: var(--color-muted);
+  }
+
+  .who-hook {
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    line-height: 1.25;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-navy);
+    margin-bottom: var(--space-6);
+  }
+
+  .who-link {
+    display: inline-block;
+    margin-top: var(--space-2);
+    font-weight: 700;
+    color: var(--color-clay);
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-yellow);
+    padding-bottom: 2px;
+  }
+
+  .who-link:hover {
+    border-bottom-color: var(--color-clay);
+  }
+
+  .cred-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: var(--space-6);
+    margin: var(--space-16) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cred-card {
+    margin: 0;
+    min-width: 0;
+    padding-top: var(--space-5);
+    border-top: 3px solid var(--color-yellow);
+  }
+
+  .cred-card h3 {
+    font-size: var(--text-base);
+    margin-bottom: var(--space-2);
+  }
+
+  .cred-card p {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  /* ---------- Références clients ---------- */
+  .clients {
+    margin-top: var(--space-16);
+  }
+
+  .clients-intro {
+    max-width: var(--prose-max);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    margin-bottom: var(--space-6);
+  }
+
+  /* Panneau volontairement clair dans les deux thèmes : les logos clients
+     sont fournis en sombre sur fond transparent, les filtrer pour le mode
+     sombre les déformerait. */
+  .clients-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8) var(--space-12);
+    margin: 0;
+    padding: var(--space-8);
+    list-style: none;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+
+  .clients-strip li {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .clients-strip img {
+    height: 38px;
+    width: auto;
+    max-width: 150px;
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.72;
+    transition: filter var(--duration-hover) var(--ease-out),
+      opacity var(--duration-hover) var(--ease-out);
+  }
+
+  .clients-strip img:hover {
+    filter: none;
+    opacity: 1;
+  }
+
+  /* ---------- Renvoi vers le mur de témoignages ---------- */
+  .testi-more {
+    margin-top: var(--space-10);
+    max-width: var(--prose-max);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  .testi-more a {
+    font-weight: 700;
+    color: var(--color-clay);
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-yellow);
+  }
+
+  .testi-more a:hover {
+    border-bottom-color: var(--color-clay);
+  }
+
+  @media (max-width: 860px) {
+    .who {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+    .who-portrait {
+      max-width: 320px;
+    }
   }
 
   /* ---------- Tarif ---------- */
@@ -1083,6 +1395,25 @@ const jsonLd = [
   }
 
   @media (max-width: 640px) {
+    .brand-logo {
+      width: 140px;
+    }
+    /* En dessous de 640px la bande de logos passe à quatre rangées : on
+       resserre plutôt que de la laisser occuper un demi-écran. */
+    .clients-strip {
+      padding: var(--space-6);
+      gap: var(--space-6) var(--space-8);
+    }
+    .clients-strip img {
+      height: 30px;
+      max-width: 120px;
+    }
+    .brand-sub {
+      display: none;
+    }
+    .masthead-cta {
+      padding: var(--space-2) var(--space-4);
+    }
     .sticky-inner {
       justify-content: center;
       text-align: center;
