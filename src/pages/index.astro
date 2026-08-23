@@ -511,6 +511,10 @@ const jsonLd = [
                     <p class="plan-extra-title">
                       Et deux heures avec moi, en tête à tête
                     </p>
+                    <p class="plan-extra-lead">
+                      Les deux séances où l'on quitte le contenu général pour
+                      travailler sur ta situation et sur tes clients.
+                    </p>
                     {f.enPlus.map((e) => (
                       <div class="plan-extra-item">
                         <h4>{e.titre}</h4>
@@ -1516,7 +1520,13 @@ const jsonLd = [
     font-family: var(--font-script);
     font-size: var(--text-xl);
     color: var(--color-yellow);
-    margin-bottom: var(--space-5);
+    margin-bottom: var(--space-2);
+  }
+
+  .plan-extra-lead {
+    font-size: var(--text-sm);
+    color: rgba(255, 253, 250, 0.78);
+    margin-bottom: var(--space-6);
   }
 
   .plan-extra-item {

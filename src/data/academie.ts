@@ -153,14 +153,14 @@ export const formules = [
     exclus: [],
     enPlus: [
       {
-        titre: 'Séance 1 — Cadrer ta pratique',
+        titre: 'Séance 1 — Situer ta pratique',
         texte:
-          "En début de parcours : où tu veux emmener ton activité, quelle place la facilitation doit y prendre, et sur quels modules concentrer ton énergie.",
+          "En début de parcours : où tu veux emmener ton activité, quelle place la facilitation doit y prendre, et sur quels modules concentrer ton énergie en priorité.",
       },
       {
-        titre: 'Séance 2 — Relire une mission réelle',
+        titre: 'Séance 2 — Cadrer et concevoir une session',
         texte:
-          "En cours de saison : tu apportes un cadrage, un design de session ou une animation qui s'est mal passée, et on la retravaille ensemble.",
+          "Tu arrives avec une demande réelle, en cours ou à venir, et on prend de la hauteur ensemble : ce que le commanditaire dit vouloir et ce dont le groupe a besoin, les grandes étapes de l'agenda, le rythme de la journée, et ce que tu donnes à voir à quel moment.",
       },
     ],
   },
