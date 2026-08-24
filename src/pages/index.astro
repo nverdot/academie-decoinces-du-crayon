@@ -3,6 +3,15 @@ import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Doodle from '../components/Doodle.astro';
 import portrait from '../assets/nicolas-portrait.png';
+import phAnime from '../assets/photos/nicolas-verdot-anime-un-collectif-devant-ses-fresques.jpg';
+import phFresque from '../assets/photos/fresque-kraft-ressources-et-challenges-d-equipe.jpg';
+import phWishList from '../assets/photos/panneau-wish-list-station-d-atelier.jpg';
+import phCercle from '../assets/photos/atelier-collectif-en-cercle-facilitation-graphique.jpg';
+import phChaises from '../assets/photos/cercle-de-chaises-et-cartes-au-sol.jpg';
+import phPratique from '../assets/photos/atelier-de-pratique-feutres-et-planches.jpg';
+import phScrum from '../assets/photos/fresque-daily-scrum-tracee-au-feutre.jpg';
+import phLigneTemps from '../assets/photos/trace-en-direct-d-une-ligne-du-temps.jpg';
+import phIca from '../assets/photos/formation-de-formateurs-ica-cote-d-ivoire.jpg';
 import {
   chiffres,
   clients,
@@ -31,6 +40,60 @@ const title =
   'Académie des Décoincés du Crayon — Formation facilitation & facilitation graphique | Cohorte 2026-2027';
 const description =
   "Formation en ligne à la facilitation et à la facilitation graphique pour consultants, formateurs et coachs. 11 modules, 9 laboratoires, 7 lives avec Nicolas Verdot. Accès à vie. Cohorte 2026-2027.";
+
+// Chaque photo porte une légende qui dit ce qu'on regarde. Une galerie sans
+// légende décore ; avec légendes, elle démontre.
+const galerie = [
+  {
+    src: phAnime,
+    alt: "Nicolas Verdot anime un collectif devant un mur de fresques et de panneaux",
+    legende: 'Le mur fait le travail : le groupe voit où il en est sans que personne ait à le rappeler.',
+    large: true,
+  },
+  {
+    src: phFresque,
+    alt: "Grande fresque sur papier kraft couverte de post-it, ressources et défis d'une équipe",
+    legende: "Une fresque de travail en fin de séance, pas une œuvre : elle sert à décider.",
+    large: false,
+  },
+  {
+    src: phWishList,
+    alt: 'Panneau « Wish List » dessiné à la main, feutres et tampons disposés sur une table',
+    legende: "La consigne dessinée à l'avance. Personne ne demande « on fait quoi ? ».",
+    large: false,
+  },
+];
+
+const reel = [
+  {
+    src: phCercle,
+    alt: 'Atelier collectif en cercle, une participante trace au tableau',
+    legende: "Le collectif en cercle, quelqu'un au tableau.",
+  },
+  {
+    src: phChaises,
+    alt: 'Cercle de chaises autour de cartes disposées au sol',
+    legende: "L'espace prépare la conversation avant le premier mot.",
+  },
+  {
+    src: phPratique,
+    alt: 'Table de travail couverte de feutres Neuland et de planches en cours',
+    legende: 'Les mains, les feutres, les planches ratées.',
+  },
+];
+
+const galerieLabos = [
+  {
+    src: phScrum,
+    alt: "Fresque « Daily Scrum » tracée au feutre sur un tableau blanc",
+    legende: "Un rituel d'équipe rendu lisible en une planche.",
+  },
+  {
+    src: phLigneTemps,
+    alt: "Tracé en direct d'une ligne du temps sur un mur blanc",
+    legende: 'Tracer devant le groupe, sans filet.',
+  },
+];
 
 const eur = new Intl.NumberFormat('fr-FR');
 const fmt = (n: number) => eur.format(n);
@@ -205,6 +268,30 @@ const jsonLd = [
       </div>
     </section>
 
+    <!-- ================= GALERIE ================= -->
+    <section class="section section--tight galerie-section" aria-label="Le métier en images">
+      <div class="container">
+        <ul class="galerie">
+          {
+            galerie.map((ph) => (
+              <li class:list={['shot', ph.large && 'shot--large']}>
+                <Image
+                  src={ph.src}
+                  alt={ph.alt}
+                  widths={[420, 760, 1100]}
+                  width={1100}
+                  sizes="(max-width: 780px) 100vw, (max-width: 1180px) 50vw, 560px"
+                  class="shot-img"
+                  loading="lazy"
+                />
+                <p class="shot-legende">{ph.legende}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
     <!-- ================= FRICTIONS ================= -->
     <section class="section" id="te-reconnais-tu">
       <div class="container">
@@ -345,6 +432,25 @@ const jsonLd = [
           Les modules traitent du processus. Les laboratoires traitent de tout
           ce qui l'entoure : le trait, la couleur, le son, les outils.
         </p>
+        <ul class="galerie galerie--paire">
+          {
+            galerieLabos.map((ph) => (
+              <li class="shot">
+                <Image
+                  src={ph.src}
+                  alt={ph.alt}
+                  widths={[420, 760]}
+                  width={760}
+                  sizes="(max-width: 780px) 100vw, 550px"
+                  class="shot-img"
+                  loading="lazy"
+                />
+                <p class="shot-legende">{ph.legende}</p>
+              </li>
+            ))
+          }
+        </ul>
+
         <div class="grid-3 lab-grid">
           {
             laboratoires.map((l) => (
@@ -354,6 +460,57 @@ const jsonLd = [
               </article>
             ))
           }
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= UNE SÉANCE, EN VRAI ================= -->
+    <section class="section section--alt" id="en-vrai">
+      <div class="container">
+        <p class="eyebrow">Une séance, en vrai</p>
+        <h2>Ce que tu sauras produire</h2>
+        <p class="lead">
+          Pas des images d'illustration : des séances réelles, avec de vrais
+          commanditaires et de vrais groupes.
+        </p>
+
+        <div class="reel">
+          <figure class="reel-media">
+            <video
+              class="reel-video"
+              src="/video/fresque-en-cours-de-seance.mp4"
+              poster="/video/fresque-en-cours-de-seance.jpg"
+              width="540"
+              height="960"
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              aria-label="Panoramique sur une fresque tracée en séance, puis sur la salle et les participants"
+            ></video>
+            <figcaption>
+              Une fresque en fin de matinée, et la salle qui va avec.
+            </figcaption>
+          </figure>
+
+          <ul class="reel-shots">
+            {
+              reel.map((ph) => (
+                <li class="shot">
+                  <Image
+                    src={ph.src}
+                    alt={ph.alt}
+                    widths={[380, 700]}
+                    width={700}
+                    sizes="(max-width: 780px) 100vw, 340px"
+                    class="shot-img"
+                    loading="lazy"
+                  />
+                  <p class="shot-legende">{ph.legende}</p>
+                </li>
+              ))
+            }
+          </ul>
         </div>
       </div>
     </section>
@@ -401,6 +558,7 @@ const jsonLd = [
               src={portrait}
               alt="Portrait de Nicolas Verdot, facilitateur graphique et coach certifié"
               widths={[320, 480, 640]}
+              width={640}
               sizes="(max-width: 860px) 100vw, 380px"
               class="portrait-img"
               loading="lazy"
@@ -429,6 +587,23 @@ const jsonLd = [
             ))
           }
         </ul>
+
+        <figure class="cred-photo">
+          <Image
+            src={phIca}
+            alt="Atelier de formation de formateurs mené avec ICA Côte d'Ivoire et Fourmis du Changement"
+            widths={[520, 900]}
+            width={900}
+            sizes="(max-width: 780px) 100vw, 480px"
+            class="shot-img"
+            loading="lazy"
+          />
+          <figcaption>
+            Formation de formateurs avec ICA Côte d'Ivoire — conversation
+            structurée, atelier de consensus et plan d'action. Les méthodes
+            enseignées dans l'Académie sont celles que je transmets aussi là-bas.
+          </figcaption>
+        </figure>
 
         <div class="clients">
           <p class="clients-intro">
@@ -1345,6 +1520,122 @@ const jsonLd = [
     color: var(--color-navy);
   }
 
+  /* ---------- Photos ---------- */
+  .galerie-section {
+    padding-block: var(--space-16);
+  }
+
+  .galerie {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .galerie--paire {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    margin-bottom: var(--space-12);
+  }
+
+  .shot {
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* Ratio imposé : les sources vont du carré au 16/9 et une grille de photos
+     de hauteurs libres se lit comme un accident plutôt qu'une intention. */
+  .shot :global(.shot-img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-alt);
+  }
+
+  .shot--large {
+    grid-column: span 2;
+  }
+
+  .shot--large :global(.shot-img) {
+    aspect-ratio: 16 / 9;
+  }
+
+  /* La légende est écrite à la main, comme une annotation portée sur un tirage.
+     C'est la même voix que les illustrations au feutre. */
+  .shot-legende {
+    margin: var(--space-3) 0 0;
+    font-family: var(--font-script);
+    font-size: var(--text-xl);
+    line-height: 1.25;
+    color: var(--color-clay);
+  }
+
+  /* ---------- Une séance, en vrai ---------- */
+  .reel {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: var(--space-10);
+    /* Centré, pas aligné en haut : une vidéo verticale à côté d'une rangée de
+       trois photos laisse forcément du vide, autant le répartir. */
+    align-items: center;
+    margin-top: var(--space-12);
+  }
+
+  .reel-media {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .reel-video {
+    display: block;
+    width: 100%;
+    /* Sans height:auto, l'attribut height="960" de la balise l'emporte sur
+       aspect-ratio et la vidéo s'étire à 960px de haut. */
+    height: auto;
+    aspect-ratio: 9 / 16;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-alt);
+  }
+
+  .reel-media figcaption,
+  .cred-photo figcaption {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+
+  .reel-shots {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cred-photo {
+    margin: var(--space-16) 0 0;
+    max-width: 520px;
+  }
+
+  @media (max-width: 780px) {
+    .shot--large {
+      grid-column: span 1;
+    }
+    .reel {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+    .reel-media {
+      max-width: 300px;
+    }
+  }
+
   /* ---------- Formules ---------- */
   .pricing-head {
     max-width: 640px;
@@ -1733,6 +2024,29 @@ const jsonLd = [
 </style>
 
 <script>
+  // La vidéo tourne en boucle sans son. On ne la lance pas depuis le HTML :
+  // « prefers-reduced-motion » doit pouvoir la garder à l'arrêt, auquel cas on
+  // rend les contrôles pour que la personne la lance si elle le souhaite.
+  const reelVideo = document.querySelector('.reel-video');
+  if (reelVideo instanceof HTMLVideoElement) {
+    const sobre = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const appliquer = () => {
+      if (sobre.matches) {
+        reelVideo.pause();
+        reelVideo.controls = true;
+      } else {
+        reelVideo.controls = false;
+        reelVideo.play().catch(() => {
+          // Certains navigateurs refusent la lecture automatique : on retombe
+          // sur l'affiche et les contrôles plutôt que sur un cadre figé muet.
+          reelVideo.controls = true;
+        });
+      }
+    };
+    appliquer();
+    sobre.addEventListener('change', appliquer);
+  }
+
   // La barre d'inscription n'apparaît qu'une fois le hero dépassé, et
   // disparaît sur la section tarif où le bouton est déjà présent.
   const bar = document.getElementById('sticky-bar');
